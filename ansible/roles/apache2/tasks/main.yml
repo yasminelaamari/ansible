@@ -1,0 +1,25 @@
+---
+# tasks file for apache2
+- name: install web componenets
+  apt: name={{item}} state=present 
+  with_items:
+    - apache2
+    - libapache2-mod-wsgi
+  tags: ['packaages']  
+
+- name: ensure mod_wsgi enabled
+  apache2_module: state=present name=wsgi
+  notify: restart apache2   
+  tags: ['configure'] 
+
+- name: de-activate default apache site
+  file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
+  notify: restart apache2   
+  tags: ['configure'] 
+
+
+
+- name: ensure apache2 started
+  service: name=apache2 state=started enabled=yes
+  tags: ['service'] 
+
